@@ -2,6 +2,7 @@ package dev.chef.crm_backend.producer;
 
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +12,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Runs all registered {@link ExternalDataProducer} beans on a schedule.
  * Adding a new producer (implementing the interface) is enough to include it.
+ * Set integration.producers.enabled=false to disable (e.g. when Kafka or external APIs are unavailable).
  */
 @Component
+@ConditionalOnProperty(name = "integration.producers.enabled", havingValue = "true", matchIfMissing = true)
 public class ProducerScheduler {
 
 	private static final Logger log = LoggerFactory.getLogger(ProducerScheduler.class);
