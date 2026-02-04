@@ -76,8 +76,9 @@ fastify.delete<{ Params: { id: string } }>('/customers/:id', async (request, rep
 
 const start = async () => {
   try {
-    await fastify.listen({ port: 8081 })
-    console.log('Server running on http://localhost:8081')
+    const port = Number(process.env.PORT ?? 8081)
+    await fastify.listen({ port, host: '0.0.0.0' })
+    console.log(`Server running on http://localhost:${port}`)
   } catch (err) {
     fastify.log.error(err)
     process.exit(1)
