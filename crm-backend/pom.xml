@@ -43,6 +43,20 @@
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
 
+		<!-- Jackson for JSON serialization (required by JsonSerializer) -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+
 		<!-- Retry support for API calls -->
 		<dependency>
 			<groupId>org.springframework.retry</groupId>
@@ -51,12 +65,10 @@
 		</dependency>
 
 		<!-- Required for @Retryable (AOP proxies) -->
-		<!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aop</artifactId>
 			<version>4.0.0-M2</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Testing -->

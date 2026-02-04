@@ -27,7 +27,7 @@ public class ProducerScheduler {
 		log.info("Producer scheduler registered {} producer(s)", producers.size());
 	}
 
-	@Scheduled(fixedDelayString = "${integration.producers.poll-interval-ms:30000}")
+	@Scheduled(fixedDelayString = "${integration.producers.poll-interval-ms:10000}")
 	public void runProducers() {
 		for (ExternalDataProducer producer : producers) {
 			try {
