@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Runs all registered {@link ExternalDataProducer} beans on a schedule.
- * Adding a new producer (implementing the interface) is enough to include it.
- * Set integration.producers.enabled=false to disable (e.g. when Kafka or external APIs are unavailable).
  */
 @Component
 @ConditionalOnProperty(name = "integration.producers.enabled", havingValue = "true", matchIfMissing = true)

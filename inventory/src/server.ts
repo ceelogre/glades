@@ -9,9 +9,18 @@ interface Product {
 const fastify = Fastify({ logger: true })
 
 let products: Product[] = [
-  { id: '1', name: 'Laptop', stock: 15 },
-  { id: '2', name: 'Mouse', stock: 50 },
-  { id: '3', name: 'Keyboard', stock: 30 }
+  { id: '1', name: 'Inkweto', stock: 15 },
+  { id: '2', name: 'Ibikapu', stock: 50 },
+  { id: '3', name: 'Imipira', stock: 30 },
+  {
+    id: '4', name: 'Jeans', stock: 22
+  },
+  { id: '5', name: 'Lacoste', stock: 10 },
+  { id: '6', name: 'Imikandara', stock: 9 },
+  { id: '7', name: 'Socks', stock: 19 },
+  { id: '8', name: 'Imisego', stock: 28 },
+  { id: '9', name: 'Raclette', stock: 47 },
+  { id: '10', name: 'Isaha', stock: 98 },
 ]
 
 // GET all products
@@ -28,7 +37,7 @@ fastify.get<{ Params: { id: string } }>('/products/:id', async (request, reply) 
   return product
 })
 
-// POST new product
+// Add new product
 fastify.post<{ Body: Omit<Product, 'id'> }>('/products', async (request, reply) => {
   const newProduct: Product = {
     id: String(Math.max(...products.map(p => parseInt(p.id)), 0) + 1),
@@ -38,40 +47,6 @@ fastify.post<{ Body: Omit<Product, 'id'> }>('/products', async (request, reply) 
   return reply.code(201).send(newProduct)
 })
 
-// PUT update product
-fastify.put<{ Params: { id: string }, Body: Partial<Product> }>(
-  '/products/:id',
-  async (request, reply) => {
-    const id = request.params.id
-    const index = products.findIndex(p => p.id === id)
-    
-    if (index === -1) {
-      return reply.code(404).send({ error: 'Product not found' })
-    }
-    
-    const existing = products[index]!
-    const updatedProduct: Product = {
-      id,
-      name: request.body.name ?? existing.name,
-      stock: request.body.stock ?? existing.stock
-    }
-    products[index] = updatedProduct
-    return updatedProduct
-  }
-)
-
-// DELETE product
-fastify.delete<{ Params: { id: string } }>('/products/:id', async (request, reply) => {
-  const id = request.params.id
-  const index = products.findIndex(p => p.id === id)
-  
-  if (index === -1) {
-    return reply.code(404).send({ error: 'Product not found' })
-  }
-  
-  products.splice(index, 1)
-  return reply.code(204).send()
-})
 
 const start = async () => {
   try {
