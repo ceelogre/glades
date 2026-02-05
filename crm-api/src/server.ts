@@ -5,14 +5,31 @@ interface Customer {
   name: string
   email: string
   phone?: string
+  productIds: string[]
 }
 
 const fastify = Fastify({ logger: true })
 
-let customers: Customer[] = [
-  { id: 1, name: 'Acme Corp', email: 'contact@acme.com', phone: '555-0100' },
-  { id: 2, name: 'TechStart Inc', email: 'hello@techstart.com' }
-]
+// Simple seed data: 10 customers, each associated with 1–2 products (IDs from the inventory service)
+const allProductIds = ['1', '2', '3', '4', '5', '6']
+
+let customers: Customer[] = Array.from({ length: 10 }, (_, i) => {
+  const id = i + 1
+  const primaryProduct = allProductIds[i % allProductIds.length]!
+  const secondaryProduct = allProductIds[(i + 1) % allProductIds.length]!
+
+  const productIds =
+    id % 2 === 0 ? [primaryProduct, secondaryProduct] : [primaryProduct]
+
+  return {
+    id,
+    name: `Customer ${id}`,
+    email: `customer${id}@example.com`,
+    phone: `0788${String(id).padStart(2, '0')}`,
+    productIds
+  }
+})
+console.info(customers)
 
 // GET all customers
 fastify.get('/customers', async (request, reply) => {
@@ -28,7 +45,7 @@ fastify.get<{ Params: { id: string } }>('/customers/:id', async (request, reply)
   return customer
 })
 
-// POST new customer
+// Add new customer
 fastify.post<{ Body: Omit<Customer, 'id'> }>('/customers', async (request, reply) => {
   const newCustomer: Customer = {
     id: Math.max(...customers.map(c => c.id), 0) + 1,
@@ -38,41 +55,7 @@ fastify.post<{ Body: Omit<Customer, 'id'> }>('/customers', async (request, reply
   return reply.code(201).send(newCustomer)
 })
 
-// PUT update customer
-fastify.put<{ Params: { id: string }, Body: Partial<Customer> }>(
-  '/customers/:id',
-  async (request, reply) => {
-    const id = parseInt(request.params.id)
-    const index = customers.findIndex(c => c.id === id)
-    
-    if (index === -1) {
-      return reply.code(404).send({ error: 'Customer not found' })
-    }
-    
-    const existing = customers[index]!
-    const updatedCustomer: Customer = {
-      id,
-      name: request.body.name ?? existing.name,
-      email: request.body.email ?? existing.email,
-      ...(request.body.phone !== undefined ? { phone: request.body.phone } : existing.phone !== undefined ? { phone: existing.phone } : {})
-    }
-    customers[index] = updatedCustomer
-    return updatedCustomer
-  }
-)
 
-// DELETE customer
-fastify.delete<{ Params: { id: string } }>('/customers/:id', async (request, reply) => {
-  const id = parseInt(request.params.id)
-  const index = customers.findIndex(c => c.id === id)
-  
-  if (index === -1) {
-    return reply.code(404).send({ error: 'Customer not found' })
-  }
-  
-  customers.splice(index, 1)
-  return reply.code(204).send()
-})
 
 const start = async () => {
   try {
